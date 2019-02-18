@@ -23,8 +23,7 @@ class MacLookup:
 
     def __init__(self, mac_address):
         if self.how_many_char(":-", mac_address) != 0:
-            mac_address = mac_address.replace("-", ":")
-            octets = mac_address.split(":")
+            octets = mac_address.replace("-", ":").split(":")
             hex_octets = []
             for octet in octets:
                 hex_octets.append(hex(int("0x" + octet, 16))[2:])
