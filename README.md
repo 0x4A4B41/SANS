@@ -1,2 +1,2 @@
 # SANS
-SANS Stuff
+SANS Stuff - Capstone project for Graduate Cybersecurity Engineer program
