@@ -22,15 +22,16 @@ class MacLookup:
     ###### - JKA
 
     def __init__(self, mac_address):
+        hex_octets = []
+        self.lookup_item_list = []
+
         if self.how_many_char(":-", mac_address) != 0:
             octets = mac_address.replace("-", ":").split(":")
-            hex_octets = []
             for octet in octets:
                 hex_octets.append(hex(int("0x" + octet, 16))[2:])
-                self.mac_address = hex_octets
+            self.mac_address = hex_octets
         else:
             raise Exception('Mac address not properly formatted')
-        self.lookup_item_list = []
 
     # Retrieve OUI Table from wireshark website
     # Only deal with 3 digit OUI for not
@@ -39,12 +40,14 @@ class MacLookup:
     def retrieve_oui_table (self):
         ssl._create_default_https_context = ssl._create_unverified_context
         oui_table = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"
+
         for line in urlopen(oui_table):
             line_split = str(line, 'utf-8').split("\t")
             if len(line_split) == 3:
                 this_oui_instance = MacLookUpTableItem (line_split[0],line_split[1],line_split[2])
                 self.lookup_item_list.append (this_oui_instance)
-        print ("loaded items from Wireshark list: " + str (len(self.lookup_item_list)))
+
+        print("loaded items from Wireshark list: " + str (len(self.lookup_item_list)))
     # def macLookup (self):
     #    pass
 
@@ -55,8 +58,7 @@ class MacLookup:
     # Count how many times a character appears in a string
     # Utility function - Todo - move to utility library
     def how_many_char(self, char, input_string):
-        found = [x for x in input_string if x in char]
-        return len(found)
+        return len([x for x in input_string if x in char])
 
 ml = MacLookup ("00-50-56-c0-00-08")
 ml.retrieve_oui_table()
