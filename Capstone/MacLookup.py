@@ -27,9 +27,7 @@ class MacLookup:
             octets = mac_address.split(":")
             hex_octets = []
             for octet in octets:
-                octet = "0x" + octet
-                octet_int = int(octet, 16)
-                hex_octets.append(hex(octet_int)[2:])
+                hex_octets.append(hex(int("0x" + octet, 16))[2:])
                 self.mac_address = hex_octets
         else:
             raise Exception('Mac address not properly formatted')
