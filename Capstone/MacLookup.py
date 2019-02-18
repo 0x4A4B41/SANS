@@ -8,7 +8,7 @@ import ssl
 class MacLookUpTableItem:
 
     # Init
-    def __init__(self,macoui,shortname,longname):
+    def __init__(self, macoui, shortname,longname):
         self.macoui = macoui
         self.shortname = shortname
         self.longname = longname
