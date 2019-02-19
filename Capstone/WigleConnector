@@ -1,0 +1,6 @@
+'''
+Placeholder for WigleConnector
+'''
+
+class WigleConnector:
+    pass
