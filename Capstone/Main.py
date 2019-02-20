@@ -1,10 +1,11 @@
-'''
+"""
 Capstone WiFi Project - Main entry point
 
-'''
+"""
 
-class Main:
+from MacLookup import MacLookup
 
 
-    def main(self):
-        return 0
+ml = MacLookup("10:9a:dd:63:de:0d")
+ml.retrieve_oui_table()
+ml.mac_lookup()

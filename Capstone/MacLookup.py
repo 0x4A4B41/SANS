@@ -4,6 +4,7 @@ MacLookup Library - code for pulling in OUI Table and checking MAC address again
 
 from urllib.request import urlopen
 import ssl
+import re
 
 
 class MacLookUpTableItem:
@@ -19,6 +20,14 @@ class MacLookUpTableItem:
         self.short_name = short_name
         self.long_name = long_name
 
+    def get_mac_oui(self):
+        return self.mac_oui
+
+    def get_short_name(self):
+        return self.short_name
+
+    def get_long_name(self):
+        return self.long_name
 
 class MacLookup:
 
@@ -32,15 +41,22 @@ class MacLookup:
     :param mac_address - (String) mac_address to match/search
     """
     def __init__(self, mac_address):
-        hex_octets = []
         self.lookup_item_list = []
+        self.mac_address = self.convert_to_octets(mac_address)
+        self.mac_address_oui = str(self.mac_address[0]) + ":" + str(self.mac_address[1]) + ":" + str(self.mac_address[2])
 
+    def main(self):
+        return 0
+
+    def convert_to_octets(self, mac_address):
+        hex_octets = []
         if self.how_many_char(":-", mac_address) != 0:
             octets = mac_address.replace("-", ":").split(":")
             for octet in octets:
                 hex_octets.append(hex(int("0x" + octet, 16))[2:])
-            self.mac_address = hex_octets
+            return hex_octets
         else:
+            print(mac_address)
             raise Exception('Mac address not properly formatted')
 
     """
@@ -55,14 +71,21 @@ class MacLookup:
 
         for line in urlopen(oui_table):
             line_split = str(line, 'utf-8').split("\t")
+            this_oui_instance = ""
 
             if len(line_split) == 3:
-                this_oui_instance = MacLookUpTableItem (line_split[0],line_split[1],line_split[2])
-                self.lookup_item_list.append (this_oui_instance)
-            else:
-                 return False
+                if len(line_split[0]) < 9:
+                    octets = self.convert_to_octets(line_split[0])
+                    for octet in octets:
+                        if len(this_oui_instance) == 0:
+                            this_oui_instance = octet
+                        else:
+                            this_oui_instance = this_oui_instance + ":" + octet
 
-        print("loaded items from Wireshark list: " + str (len(self.lookup_item_list)))
+                this_oui_instance = MacLookUpTableItem(line_split[0], line_split[1], line_split[2])
+                self.lookup_item_list.append(this_oui_instance)
+
+        print("loaded items from Wireshark list: " + str(len(self.lookup_item_list)))
         return True
     # def macLookup (self):
     #    pass
@@ -81,9 +104,20 @@ class MacLookup:
     def how_many_char(self, char, input_string):
         return len([x for x in input_string if x in char])
 
+    """
+    Lookup up Mac Address and return manufacturer
+    
+    """
+    def mac_lookup(self):
+        for item in self.lookup_item_list:
+            if self.mac_address_oui.upper() == item.get_mac_oui().upper():
+                print("Match Found: " + self.mac_address_oui + "<>" + item.get_mac_oui())
+                print("Short Name: " + item.get_short_name())
+                print("Long Name: " + item.get_long_name())
+                return True
+        print("Unknown MAC OUI")
+        return False
 
-ml = MacLookup ("00-50-56-c0-00-08")
-ml.retrieve_oui_table()
-# ml.print_oui_reference()
-
+    if __name__ == '__main__':
+        main()
 
