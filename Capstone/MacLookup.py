@@ -106,7 +106,7 @@ class MacLookup:
 
     """
     Lookup up Mac Address and return manufacturer
-    
+    :return MacLooupTableItem object for match or 0
     """
     def mac_lookup(self):
         for item in self.lookup_item_list:
@@ -114,9 +114,9 @@ class MacLookup:
                 print("Match Found: " + self.mac_address_oui + "<>" + item.get_mac_oui())
                 print("Short Name: " + item.get_short_name())
                 print("Long Name: " + item.get_long_name())
-                return True
+                return item
         print("Unknown MAC OUI")
-        return False
+        return 0
 
     if __name__ == '__main__':
         main()
