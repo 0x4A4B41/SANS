@@ -4,7 +4,6 @@ MacLookup Library - code for pulling in OUI Table and checking MAC address again
 
 from urllib.request import urlopen
 import ssl
-import re
 
 
 class MacLookUpTableItem:
@@ -20,22 +19,28 @@ class MacLookUpTableItem:
         self.short_name = short_name
         self.long_name = long_name
 
+    """
+    Returns MAC OUI
+    :return String (mac_oui)
+    """
     def get_mac_oui(self):
         return self.mac_oui
 
+    """
+    Returns Short Name
+    :return String (short_name)
+    """
     def get_short_name(self):
         return self.short_name
 
+    """
+    Returns Long Name
+    :return String (long_name)
+    """
     def get_long_name(self):
         return self.long_name
 
 class MacLookup:
-
-    # Initializer
-    # input validation on MAC
-    #  convert MAC into ints and split to octets
-    ###### - JKA
-
     """
     Initialization function __init__
     :param mac_address - (String) mac_address to match/search
@@ -48,6 +53,13 @@ class MacLookup:
     def main(self):
         return 0
 
+    """
+    Convert Mac Address String xx:xx:xx:yy:yy:yy | xx-xx-xx-yy-yy-yy
+    to array of int/hex objects
+    :param mac_address - MAC address string
+    :return hex_octets - array/list of MAC octets
+    :raise exception - 'Invali MAC Address'
+    """
     def convert_to_octets(self, mac_address):
         hex_octets = []
         if self.how_many_char(":-", mac_address) != 0:
@@ -57,7 +69,7 @@ class MacLookup:
             return hex_octets
         else:
             print(mac_address)
-            raise Exception('Mac address not properly formatted')
+            raise Exception('Invalid MAC Address: Mac address not properly formatted')
 
     """
     Retrieve OUI Table from wireshark website
@@ -73,19 +85,18 @@ class MacLookup:
             line_split = str(line, 'utf-8').split("\t")
             this_oui_instance = ""
 
-            if len(line_split) == 3:
-                if len(line_split[0]) < 9:
+            if len(line_split) == 3:        # validate data fits into MacLookupTableItem object
+                if len(line_split[0]) < 9:  # expect xx:yy:zz - todo rewrite code to address MAC OUI with Masking
                     octets = self.convert_to_octets(line_split[0])
                     for octet in octets:
                         if len(this_oui_instance) == 0:
                             this_oui_instance = octet
                         else:
                             this_oui_instance = this_oui_instance + ":" + octet
-
-                this_oui_instance = MacLookUpTableItem(line_split[0], line_split[1], line_split[2])
-                self.lookup_item_list.append(this_oui_instance)
-
-        print("loaded items from Wireshark list: " + str(len(self.lookup_item_list)))
+                self.lookup_item_list.append(MacLookUpTableItem(line_split[0], line_split[1], line_split[2]))
+            else:
+                raise Exception ('UnexpectedOUIFormat - unexpected data found')
+        print("loaded items from WireShark list: " + str(len(self.lookup_item_list)))
         return True
     # def macLookup (self):
     #    pass
@@ -101,12 +112,13 @@ class MacLookup:
     :param input_string (String)
     :return int (Int) - number of matches - >0 - equal at least one match - 0 - none
     """
-    def how_many_char(self, char, input_string):
+    @staticmethod
+    def how_many_char(char, input_string):
         return len([x for x in input_string if x in char])
 
     """
     Lookup up Mac Address and return manufacturer
-    :return MacLooupTableItem object for match or 0
+    :return MacLookupTableItem object for match or 0
     """
     def mac_lookup(self):
         for item in self.lookup_item_list:

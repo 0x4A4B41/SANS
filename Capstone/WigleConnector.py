@@ -103,17 +103,17 @@ class WigleConnector:
         pass
 
     """
-            Initialization function __init__
-            :param api_name - (String) username for Wigle API
-            :param api_token - (String) auth token for Wigle API
+    Initialization function __init__
+    :param api_name - (String) username for Wigle API
+    :param api_token - (String) auth token for Wigle API
     """
     def __init__(self, api_name, api_token):
         self.api_name = api_name
         self.api_token = api_token
 
     """
-                Test Credentials function test_creds
-                :return (Bool) - True on Success; False else
+    Test Credentials function test_creds
+    :return (Bool) - True on Success; False else
     """
     def test_creds(self):
         request_url = "https://api.wigle.net/api/v2/profile/user"
