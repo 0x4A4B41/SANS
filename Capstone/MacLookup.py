@@ -94,8 +94,6 @@ class MacLookup:
                         else:
                             this_oui_instance = this_oui_instance + ":" + octet
                 self.lookup_item_list.append(MacLookUpTableItem(line_split[0], line_split[1], line_split[2]))
-            else:
-                raise Exception ('UnexpectedOUIFormat - unexpected data found')
         print("loaded items from WireShark list: " + str(len(self.lookup_item_list)))
         return True
     # def macLookup (self):
