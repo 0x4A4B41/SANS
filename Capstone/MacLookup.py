@@ -43,23 +43,18 @@ class MacLookUpTableItem:
 class MacLookup:
     """
     Initialization function __init__
-    :param mac_address - (String) mac_address to match/search
     """
-    def __init__(self, mac_address):
+    def __init__(self):
         self.lookup_item_list = []
-        self.mac_address = self.convert_to_octets(mac_address)
-        self.mac_address_oui = str(self.mac_address[0]) + ":" + str(self.mac_address[1]) + ":" + str(self.mac_address[2])
 
     def main(self):
         return 0
 
-    """
-    Convert Mac Address String xx:xx:xx:yy:yy:yy | xx-xx-xx-yy-yy-yy
+    """ Convert Mac Address String xx:xx:xx:yy:yy:yy | xx-xx-xx-yy-yy-yy
     to array of int/hex objects
     :param mac_address - MAC address string
     :return hex_octets - array/list of MAC octets
-    :raise exception - 'Invali MAC Address'
-    """
+    :raise exception - 'Invalid MAC Address' """
     def convert_to_octets(self, mac_address):
         hex_octets = []
         if self.how_many_char(":-", mac_address) != 0:
@@ -71,12 +66,10 @@ class MacLookup:
             print(mac_address)
             raise Exception('Invalid MAC Address: Mac address not properly formatted')
 
-    """
-    Retrieve OUI Table from wireshark website
+    """ Retrieve OUI Table from wireshark website
     Only deal with 3 digit OUI for not
     Todo: - need to code for storage of 6 digit OUI and masks
-    :return (Bool) True on success - else False
-    """
+    :return (Bool) True on success - else False """
     def retrieve_oui_table (self):
         ssl._create_default_https_context = ssl._create_unverified_context
         oui_table = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"
@@ -103,27 +96,22 @@ class MacLookup:
         for item in self.lookup_item_list:
             print(item.mac_oui + " " + item.short_name)
 
-    """
-    Count how many times a character appears in a string
+    """ Count how many times a character appears in a string
     Utility function - Todo - move to utility library
     :param char (String)
     :param input_string (String)
-    :return int (Int) - number of matches - >0 - equal at least one match - 0 - none
-    """
+    :return int (Int) - number of matches - >0 - equal at least one match - 0 - none """
     @staticmethod
     def how_many_char(char, input_string):
         return len([x for x in input_string if x in char])
 
-    """
-    Lookup up Mac Address and return manufacturer
-    :return MacLookupTableItem object for match or 0
-    """
-    def mac_lookup(self):
+    """ Lookup up Mac Address and return manufacturer
+    :return MacLookupTableItem object for match or 0 """
+    def mac_lookup(self, mac_address):
+        mac_address = self.convert_to_octets(mac_address)
+        mac_address_oui = str(mac_address[0]) + ":" + str(mac_address[1]) + ":" + str(mac_address[2])
         for item in self.lookup_item_list:
-            if self.mac_address_oui.upper() == item.get_mac_oui().upper():
-                print("Match Found: " + self.mac_address_oui + "<>" + item.get_mac_oui())
-                print("Short Name: " + item.get_short_name())
-                print("Long Name: " + item.get_long_name())
+            if mac_address_oui.upper() == item.get_mac_oui().upper():
                 return item
         print("Unknown MAC OUI")
         return 0

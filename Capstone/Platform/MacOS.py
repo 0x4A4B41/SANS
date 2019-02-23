@@ -1,24 +1,21 @@
-try:
-    import objc
-    objc.loadBundle ('CoreWLAN', globals(),
-                     bundle_path='/System/Library/Frameworks/CoreWLAN.framework')
+import objc
 
-    class MacOS:
-        GUEST_NETWORKS = defaults.GUEST_NETWORKS
-        GUEST_PSKS = defaults.GUEST_PSKS
 
-        def __init__(self):
-            self.RegisterMetadataForSelector('scanForNetworksWithName:error:', 2)
-            self.RegisterMetadataForSelector('setPower:error', 2)
-            self.RegisterMetadataForSelector('associateToNetwork:password:forceBSSID:remember:error', 5)
-            del self.RegisterMetadataForSelector
+class MacOS:
+    def __init__(self):
+        objc.loadBundle('CoreWLAN', globals(), bundle_path='/System/Library/Frameworks/CoreWLAN.framework')
+        self.iface = CWInterface.interface()
 
-        def RegisterMetadataForSelector(self, selector, error_arg_num):
-            objc.registerMetaDataForSelector(
-                'CWInterface', selector,
-                {'arguments': {error_arg_num + 1: {'type_modifier': 'o'}}})
+    """ Scan Networks - scan for wireless networks
+    :return 
+    """
+    def scan_wifi(self):
+        result, error = self.iface.scanForNetworksWithName_includeHidden_error_(None, True, None)
+        return result
 
-except ImportError:
-    print("error importing MacOS libs")
-    raise
+    @staticmethod
+    def main():
+        return 0
 
+    if __name__ == '__main__':
+        main()
