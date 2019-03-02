@@ -107,7 +107,6 @@ class MacLookup:
                             this_oui_instance = this_oui_instance + ":" + octet
                 self.lookup_item_list.append(MacLookUpTableItem(parts[0], parts[1], parts[2]))
         print("loaded items from WireShark list: " + str(len(self.lookup_item_list)))
-        return True
 
     """ Count how many times a character appears in a string
     Utility function - Todo - move to utility library
