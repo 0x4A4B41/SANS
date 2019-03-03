@@ -2,7 +2,7 @@ import subprocess
 import re
 import copy
 from .Common import Printable
-
+from .Common import Common
 
 """ Win32 - platform specific code for scanning wifi - MacOS is first platform. Will write similar code segments for
 Linux, and others """
@@ -14,7 +14,7 @@ and BSSIDS - multiple APs attached to a network with a single SSID (Mesh)
 """
 
 
-class BSSID(Printable):
+class BSSID(Printable, Common):
     def __init__(self):
         self.bssid = ""
         self.ssid = ""
@@ -45,6 +45,7 @@ class BSSID(Printable):
     def get_signal(self):
         return self.signal
 
+
 """  Class for managing SSID data - m
 :param  Printable
 """
@@ -52,13 +53,11 @@ class BSSID(Printable):
 
 class WirelessNetwork(Printable):
 
-    ssid=""
-    auth=""
-    bssid=[]
-
     def __init__(self, *arg):
         line = re.sub("SSID [0-9].*: ", "", arg[0])  # SSID
         self.ssid = copy.copy(line)
+        self.auth = ""
+        self.bssid = []
 
     def set_ssid(self, ssid):
         self.ssid = copy.copy(ssid)
@@ -78,8 +77,10 @@ class WirelessNetwork(Printable):
     def return_bssid(self):
         return self.bssid
 
+
 """ Win32 Windows specific code
 """
+
 
 class Win32:
 
