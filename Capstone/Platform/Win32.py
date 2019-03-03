@@ -1,15 +1,20 @@
 import subprocess
 import re
 import copy
+from .Common import Printable
+
+
 """ Win32 - platform specific code for scanning wifi - MacOS is first platform. Will write similar code segments for
 Linux, and others """
 
 
-class BSSID:
-    def __repr__(self):
-        from pprint import pformat
-        return "<" + type(self).__name__ + "> " + pformat(vars(self), indent=4, width=1)
+""" Class for managing BSSID data - made a separate class because there can be a many-to-one relationship between SSIDs 
+and BSSIDS - multiple APs attached to a network with a single SSID (Mesh)
+:param  Printable
+"""
 
+
+class BSSID(Printable):
     def __init__(self):
         self.bssid = ""
         self.ssid = ""
@@ -40,17 +45,16 @@ class BSSID:
     def get_signal(self):
         return self.signal
 
+"""  Class for managing SSID data - m
+:param  Printable
+"""
 
 
-class WirelessNetwork:
+class WirelessNetwork(Printable):
 
     ssid=""
     auth=""
     bssid=[]
-
-    def __repr__(self):
-        from pprint import pformat
-        return "<" + type(self).__name__ + "> " + pformat(vars(self), indent=4, width=1)
 
     def __init__(self, *arg):
         line = re.sub("SSID [0-9].*: ", "", arg[0])  # SSID
@@ -74,6 +78,9 @@ class WirelessNetwork:
     def return_bssid(self):
         return self.bssid
 
+""" Win32 Windows specific code
+"""
+
 class Win32:
 
     def __init__(self):
@@ -89,7 +96,6 @@ class Win32:
         this_ssid = WirelessNetwork("")
         this_bssid = BSSID()
         for result in results_:
-            # print("result loop  (1): \n\n" + str(result))
             result = "SSID" + result
             result_ = result.split("\n")
             for line in result_:
@@ -117,16 +123,16 @@ class Win32:
                 elif re.match(".+Channel.+:.+", line):
                     line = re.sub("Channel.*:", "", line)  # ChannelNumber
                     this_bssid.set_channel(line.replace("\r", ""))
-        print("Win32: wrap_scan_wifi exit")
-        print("Found " +str(len(self.ssids)) + " APs")
         return self.ssids
 
+    """ scan_wifi function returns text output from netsh command (Windows 10)
+    output is ugly - wrote wrapper to process output wrap_scan_wifi(input str)
+    todo: Modify code to utilize API
+    :return list of WirelessNetwork objects
+    """
 
     def scan_wifi(self):
-        print("Win32: scan_wifi entry")
         return self.wrap_scan_wifi(subprocess.check_output(["netsh", "wlan", "show", "networks", "mode=bssid"]))
-        #    print("_____(" + str(i) + ")")
-        print("Win32: scan_wifi exit")
 
     @staticmethod
     def main():

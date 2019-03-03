@@ -2,9 +2,10 @@
 
 from urllib.request import urlopen
 import ssl
+import json
 
 
-class MacLookUpTableItem:
+class MacLookUpTableItem ():
 
     """ Initialization function __init__
     :param mac_oui (String)
@@ -66,7 +67,8 @@ class MacLookup:
     to array of int/hex objects - specific to data from NMAP
     :param mac_address - MAC address string
     :raise exception - 'Invalid MAC Address' """
-    def convert_nmap_to_octets(self, mac_address):
+    @staticmethod
+    def convert_nmap_to_octets(mac_address):
         hex_octets = []
         octets = [mac_address[0:2], mac_address[3:5], mac_address[6:8]]
         for octet in octets:
@@ -76,7 +78,7 @@ class MacLookup:
     """ Retrieve OUI Table from NMAP website
     Only deal with 3 digit OUI - no masks
     Todo: - need to code for storage of 6 digit OUI and masks
-    :return (Bool) True on success - else False """
+    :return (int) number of records imported """
     def retrieve_oui_table_nmap(self):
         ssl._create_default_https_context = ssl._create_unverified_context
         oui_table = "https://linuxnet.ca/ieee/oui/nmap-mac-prefixes"
@@ -85,12 +87,12 @@ class MacLookup:
             if len(parts) == 2: # matches oui.txt format (0) MAC OUI (1) Vendor Short Name
                 parts[0] = parts[0][0:2] + ":" + parts[0][2:4] + ":" + parts[0][4:6]
                 self.lookup_item_list_nmap.append(MacLookUpTableItem(parts[0], parts[1]))
-        print("loaded items from NMAP list: " + str(len(self.lookup_item_list_nmap)))
+        return len(self.lookup_item_list_nmap)
 
     """ Retrieve OUI Table from wireshark website
     Only deal with 3 digit OUI for now
     Todo: - need to code for storage of 6 digit OUI and masks
-    :return (Bool) True on success - else False """
+    :return (int) number of records imported """
     def retrieve_oui_table_wireshark(self):
         ssl._create_default_https_context = ssl._create_unverified_context
         oui_table = "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"
@@ -106,7 +108,7 @@ class MacLookup:
                         else:
                             this_oui_instance = this_oui_instance + ":" + octet
                 self.lookup_item_list.append(MacLookUpTableItem(parts[0], parts[1], parts[2]))
-        print("loaded items from WireShark list: " + str(len(self.lookup_item_list)))
+        return len(self.lookup_item_list)
 
     """ Count how many times a character appears in a string
     Utility function - Todo - move to utility library
@@ -136,6 +138,13 @@ class MacLookup:
             if mac_address_oui.upper() == item.get_mac_oui().upper():
                 return item
         return 0
+
+    @staticmethod
+    def return_lookup_item_list_json(_list):
+        return_string = ""
+        for item in _list:
+            return_string += json.dumps(item.__dict__, ensure_ascii=False)
+        return return_string
 
     if __name__ == '__main__':
         main()

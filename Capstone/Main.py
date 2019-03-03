@@ -22,12 +22,32 @@ class Main:
             self.isLin = False
 
         self.mac_lookup_obj = MacLookup()
-        self.mac_lookup_obj.retrieve_oui_table_wireshark()
-        self.mac_lookup_obj.retrieve_oui_table_nmap()
+        wireshark_records = self.mac_lookup_obj.retrieve_oui_table_wireshark()
+        nmap_records = self.mac_lookup_obj.retrieve_oui_table_nmap()
+        print("Loaded " + str(wireshark_records) + "+ records from Wireshark data")
+        print("Loaded " + str(nmap_records) + "+ records from NMAP data")
+        # todo: remove hardcoding for json file names
+        self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
+                                        self.mac_lookup_obj.lookup_item_list),
+                                       "wsharkoui.json")
+        self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
+                                        self.mac_lookup_obj.lookup_item_list_nmap),
+                                       "nmapoui.json")
+
+    def write_oui_records_to_json(self, record_list_string, _filename):
+        if self.isMac:
+            platform_obj = MacOS()
+        elif self.isWin:
+            platform_obj = Win32()
+        else:
+            return -1
+        platform_obj.write_to_file(_filename,
+                                    platform_obj.get_app_data_dir(),
+                                    record_list_string)
+        return 0
 
     """ Pre connect Scan Function"""
     def pre_connect_scan(self):
-        print("pre_connect_scan_results enter")
         if self.isMac:
             platform_obj = MacOS()
         elif self.isWin:
@@ -37,7 +57,6 @@ class Main:
 
     """ Print function for pre connect scan"""
     def print_pre_connect_scan_results(self, results):
-        print("print_pre_connect_scan_results enter")
         if self.isWin:
             for result in results:
                     print("SSID:" + str(result.ssid))
@@ -70,7 +89,9 @@ class Main:
                     print(lookup_data)
 
     def main(self):
-        self.pre_connect_scan()
+        pass
+        #self.pre_connect_scan()
+
 
 if __name__ == '__main__':
     _Main = Main()
