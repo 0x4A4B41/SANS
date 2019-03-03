@@ -43,3 +43,4 @@ class Common:
         for _object in json_objs:
             object_list.append(json.loads(_object))
         return object_list
+
