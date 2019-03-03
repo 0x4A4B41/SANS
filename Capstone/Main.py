@@ -22,17 +22,51 @@ class Main:
             self.isLin = False
 
         self.mac_lookup_obj = MacLookup()
-        wireshark_records = self.mac_lookup_obj.retrieve_oui_table_wireshark()
-        nmap_records = self.mac_lookup_obj.retrieve_oui_table_nmap()
-        print("Loaded " + str(wireshark_records) + "+ records from Wireshark data")
-        print("Loaded " + str(nmap_records) + "+ records from NMAP data")
-        # todo: remove hardcoding for json file names
-        self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
-                                        self.mac_lookup_obj.lookup_item_list),
-                                       "wsharkoui.json")
-        self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
-                                        self.mac_lookup_obj.lookup_item_list_nmap),
-                                       "nmapoui.json")
+
+        wireshark_records = self.read_wireshark_oui_records_from_json("wsharkoui.json")
+        # todo: remove hard coding for json file names
+
+        if len(wireshark_records) < 1:
+            wireshark_records = self.read_wireshark_oui_records_from_web()
+        else:
+            print("Loaded " + str(wireshark_records) + "+ records from Wireshark data")
+            self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
+                self.mac_lookup_obj.lookup_item_list), "wsharkoui.json")
+
+        nmap_records = self.read_wireshark_oui_records_from_json("nmapoui.json")
+        if len(nmap_records) < 1:
+            nmap_records = self.read_wireshark_oui_records_from_web()
+            print("Loaded " + str(nmap_records) + "+ records from NMAP data")
+            self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
+                self.mac_lookup_obj.lookup_item_list_nmap), "nmapoui.json")
+        else:
+            print("Loaded " + str(nmap_records) + "+ records from NMAP data")
+
+    def read_wireshark_oui_records_from_json(self, _wireshark_filename):
+        if self.isMac:
+            platform_obj = MacOS()
+        elif self.isWin:
+            platform_obj = Win32()
+        else:
+            return -1
+        return platform_obj.read_from_file(_wireshark_filename,
+                                                         platform_obj.get_app_data_dir())
+
+    def read_wireshark_oui_records_from_web(self):
+        return self.mac_lookup_obj.retrieve_oui_table_wireshark()
+
+    def read_nmap_oui_records_from_json(self, _nmap_filename):
+        if self.isMac:
+            platform_obj = MacOS()
+        elif self.isWin:
+            platform_obj = Win32()
+        else:
+            return -1
+        return platform_obj.read_from_file(_nmap_filename,
+                                                         platform_obj.get_app_data_dir())
+
+    def read_nmap_oui_records_from_web(self):
+        return self.mac_lookup_obj.retrieve_oui_table_nmap()
 
     def write_oui_records_to_json(self, record_list_string, _filename):
         if self.isMac:
