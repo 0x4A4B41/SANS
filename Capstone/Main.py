@@ -28,6 +28,7 @@ class Main:
 
         if len(wireshark_records) < 1:
             wireshark_records = self.read_wireshark_oui_records_from_web()
+            print ("Loaded " + str(wireshark_records) + "+ records from Wireshark from Web")
         else:
             print("Loaded " + str(wireshark_records) + "+ records from Wireshark data")
             self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
@@ -36,7 +37,7 @@ class Main:
         nmap_records = self.read_wireshark_oui_records_from_json("nmapoui.json")
         if len(nmap_records) < 1:
             nmap_records = self.read_wireshark_oui_records_from_web()
-            print("Loaded " + str(nmap_records) + "+ records from NMAP data")
+            print("Loaded " + str(nmap_records) + "+ records from NMAP data from Web")
             self.write_oui_records_to_json(self.mac_lookup_obj.return_lookup_item_list_json(
                 self.mac_lookup_obj.lookup_item_list_nmap), "nmapoui.json")
         else:
@@ -103,9 +104,9 @@ class Main:
                                 print("Long Name match (WireShark): " + str(lookup_data[0].get_long_name()))
                             if type(lookup_data[1]) != int:
                                 print("Short Name match (NMAP): " + lookup_data[1].get_short_name())
-                            else:
-                                print("Unable to find MAC OUI / BSSID")
-                                print(lookup_data)
+                            # else:
+                            #     print("Unable to find MAC OUI / BSSID")
+                            #     print(lookup_data)
         elif self.isMac:
             for result in results:
                 print("SSID: " + str(result.ssid()))
@@ -119,12 +120,12 @@ class Main:
                 if type(lookup_data[1]) != int:
                     print("Short Name match (NMAP): " + lookup_data[1].get_short_name())
                 else:
-                    print("Unable to lookup MAC OUI / BSSID")
-                    print(lookup_data)
+                     print("Unable to lookup MAC OUI / BSSID")
+                     print(lookup_data)
 
     def main(self):
         pass
-        #self.pre_connect_scan()
+        self.pre_connect_scan()
 
 
 if __name__ == '__main__':
