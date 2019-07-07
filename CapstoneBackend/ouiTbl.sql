@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS ouiTbl
+(
+oui VARCHAR(32),
+shortName VARCHAR(255),
+longName TEXT,
+UNIQUE INDEX(oui)
+);
