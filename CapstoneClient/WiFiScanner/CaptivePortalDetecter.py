@@ -1,6 +1,5 @@
-import hashlib
-
 import requests
+import hashlib
 
 '''
 Code for detecting Captive Portal. Based on 
@@ -8,8 +7,7 @@ https://success.tanaza.com/s/article/How-Automatic-Detection-of-Captive-Portal-w
 TODO: Check for SSL Certificate in consistency also
 '''
 
-
-class CaptivePortal:
+class Captive_Portal:
 
     def __init__(self):
         self.hash = hashlib.sha256()
@@ -57,5 +55,5 @@ class CaptivePortal:
         return self.check_known_sites()
 
 if __name__ == '__main__':
-    _Main = CaptivePortal()
+    _Main = Captive_Portal()
     _Main.main()
