@@ -1,7 +1,19 @@
+"""
+index.py routing page for Flask to manage exposed APIs for Capstone projectl
+
+    /macouilookup GET method - produces the contents of the OUI table
+    /macouilookup POST method - lookup single MAC OUI and return vendor
+      shortname and longname
+    /dnscheck GET method - does dns lookup on known sites (google, apple, facebook,
+      amazon) and returns SOA and serial
+    /dnscheck POST method - does dns lookup on one site and returns SOA and serial
+
+"""
+
 import mysql.connector
+from CapstoneBackend.OUIManager.Config.DatabaseCreds import DatabaseCreds
 from dns.resolver import Resolver
 from flask import Flask, jsonify, request
-from CapstoneBackend.OUIManager.Config.DatabaseCreds import DatabaseCreds
 
 app = Flask(__name__)
 dns_servers = ['1.1.1.1', '1.0.0.1', '208.67.222.222', '208.67.220.220']
