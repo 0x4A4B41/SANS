@@ -4,8 +4,22 @@ if sys.platform == "darwin":
 elif sys.platform == "win32":
     from CapstoneClient.WiFiScanner.Win32 import Win32
 
+security_mode = [
+    'Open',  # 0
+    'WEP',  # 1
+    'WPAPersonal'  # 2
+    'WPAPersonalMixed',  # 3
+    'WPA2Personal',  # 4
+    'Personal',  # 5
+    'Dynamic WEP',  # 6
+    'WPA Enterprise',  # 7
+    'WPA EnterpriseMixed'  # 8
+    'WPA2 Enterprise'  # 9
+    'Enterprise'  # 10
+]
 
-class Driver:
+
+class WiFiScanner:
 
     def __init__(self):
         if sys.platform == "darwin":
@@ -19,39 +33,13 @@ class Driver:
 
     """ Preliminary network scan - enumerate WireLess SSIDs and BSSIDs and do general recon
     """
-    def pre_connect_scan(self):
+    def scan(self):
         if self.isMac:
             platform_obj = MacOS()
         elif self.isWin:
             platform_obj = Win32()
-        wifi_scan_results = platform_obj.scan_wifi()
-        for net in wifi_scan_results:
-          pass
-        # print (wifi_scan_results)
-
-    def main(self):
-        self.pre_connect_scan()
-
-
-if __name__ == '__main__':
-    _Driver = Driver()
-    _Driver.main()
-
-'''
-
-import objc
-import json
-
-bundle_path = '/System/Library/Frameworks/CoreWLAN.framework'
-objc.loadBundle('CoreWLAN',
-                bundle_path=bundle_path,
-                module_globals=globals())
-
-iface = CWInterface.interface()
-result,errors = iface.scanForNetworksWithSSID_includeHidden_error_(None, True, None)
-jdata = []
-
-for r in result:
-    print (r)
-
-'''
+        nets = platform_obj.scan_wifi()
+        for net in nets:
+            if net['security'] == 0: #remove open networks from further analysis - insecure
+                nets.remove(net)
+        return nets
