@@ -1,0 +1,9 @@
+dnspython==1.16.0
+Flask==1.1.0
+jsonify==0.5
+mysql-connector==2.2.9
+pyobjc==5.2
+pyobjc-core==5.2
+requests==2.22.0
+urllib3==1.25.3
+Werkzeug==0.15.4
