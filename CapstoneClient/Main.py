@@ -1,9 +1,13 @@
 from dns.resolver import Resolver
+from CapstoneClient.WiFiScanner.WiFiScanner import WiFiScanner, security_mode
+
 import requests
+import json
 
-dns_prefix = 'http://localhost:5000'
+dns_prefix = 'http://192.168.65.24:5000'
 dns_endpoint = '/dnscheck'
-
+oui_prefix = 'http://192.168.65.24:5000'
+oui_endpoint = '/macouilookup'
 
 
 class ApiError(Exception):
@@ -11,7 +15,6 @@ class ApiError(Exception):
 
 
 class Main:
-
 
     def lookup_dns(self):
         r = Resolver()
@@ -41,8 +44,39 @@ class Main:
             raise ApiError('POST {} {}'.format(dns_prefix, resp.status_code))
         for dns_item in resp.json():
             json_list.append(dns_item)
+        return json_list
+
+#######################
+    def lookup_one_oui_from_service(self, json_package):
+        json_list = []
+        resp = requests.post(oui_prefix + oui_endpoint, None, json_package)
+        if resp.status_code != 200:
+            raise ApiError('POST {} {}'.format(oui_prefix, resp.status_code))
+        for oui_item in resp.json():
+            json_list.append(oui_item)
+        return json_list
 
     def main(self):
+        # scan for wireless networks and return only the ones that are not open nets
+        _WiFiScanner = WiFiScanner()
+        _WiFiNets = _WiFiScanner.scan()
+        # lookup up the mac addresses of the nets returned to check manufacturer
+        try:
+            for net in _WiFiNets:
+                loaded_net = {'oui': net['mac address'].upper()[0:8]}
+                oui_lookup = self.lookup_one_oui_from_service(loaded_net)
+                print(net['ssid'])
+                if isinstance(net['security'], int):
+                    print(" Security: " + security_mode[net['security']])
+                elif isinstance(net['security'],str):
+                    print(" Security: " + net['security'])
+                for lookup in oui_lookup or print("Router info: Not in Lookup Table"):
+                    print(" Router info:" + lookup['longname'])
+        except TypeError:
+            print("Exception")
+            pass
+
+        """
         service_response = self.lookup_all_dns_from_service()
         internal_response = self.lookup_dns()
         for dns_item in service_response:
@@ -66,7 +100,7 @@ class Main:
                                                                         inner_dns_item['serial']))
                         print('REST : domain: {} soa: {} serial: {}'.format(dns_item['domain'], dns_item['soa'],
                                                                             dns_item['serial']))
-
+        """
 
 
 

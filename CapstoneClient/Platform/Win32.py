@@ -1,25 +1,28 @@
 import subprocess
 import re
-import copy
-from .Common import BSSID, WirelessNetwork
 
 """ Win32 - platform specific code for scanning wifi - MacOS is first platform. Will write similar code segments for
 Linux, and others """
 
+from ..Platform.Common import BSSID
+from ..Platform.Common import WirelessNetwork
 
-""" Win32 Windows specific code
-"""
 
 class Win32:
 
     def __init__(self):
         self.ssids = []
 
+    def scan_wifi(self):
+        return self.wrap_scan_wifi(subprocess.check_output(["netsh", "wlan", "show", "networks", "mode=bssid"]))
+
     """ Scan Networks - scan for wireless networks
         :return result object """
 
     def wrap_scan_wifi(self, results):
         print("Win32: wrap_scan_wifi entry")
+        print("Results\n\n")
+        print(str(results))
         results = results.decode()
         results_ = results.split("\nSSID")
         this_ssid = WirelessNetwork("")
@@ -52,6 +55,8 @@ class Win32:
                 elif re.match(".+Channel.+:.+", line):
                     line = re.sub("Channel.*:", "", line)  # ChannelNumber
                     this_bssid.set_channel(line.replace("\r", ""))
+        print("---")
+        print(str(self.ssids))
         return self.ssids
 
     """ scan_wifi function returns text output from netsh command (Windows 10)
@@ -59,9 +64,6 @@ class Win32:
     todo: Modify code to utilize API
     :return list of WirelessNetwork objects
     """
-
-    def scan_wifi(self):
-        return self.wrap_scan_wifi(subprocess.check_output(["netsh", "wlan", "show", "networks", "mode=bssid"]))
 
     @staticmethod
     def main():
