@@ -40,6 +40,10 @@ class WiFiScanner:
             platform_obj = Win32()
         nets = platform_obj.scan_wifi()
         for net in nets:
-            if net['security'] == 0: #remove open networks from further analysis - insecure
-                nets.remove(net)
+            if isinstance(net['security'], int):
+                if net['security'] == 0: #remove open networks from further analysis - insecure
+                    nets.remove(net)
+            elif isinstance(net['security'], str):
+                if net['security'].lower().replace(" ", "") == 'open':
+                    nets.remove(net)
         return nets

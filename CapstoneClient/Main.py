@@ -4,11 +4,10 @@ from CapstoneClient.WiFiScanner.WiFiScanner import WiFiScanner, security_mode
 import requests
 import json
 
-dns_prefix = 'http://localhost:5000'
+dns_prefix = 'http://192.168.65.24:5000'
 dns_endpoint = '/dnscheck'
-oui_prefix = 'http://localhost:5000'
+oui_prefix = 'http://192.168.65.24:5000'
 oui_endpoint = '/macouilookup'
-
 
 
 class ApiError(Exception):
@@ -16,7 +15,6 @@ class ApiError(Exception):
 
 
 class Main:
-
 
     def lookup_dns(self):
         r = Resolver()
@@ -65,14 +63,17 @@ class Main:
         # lookup up the mac addresses of the nets returned to check manufacturer
         try:
             for net in _WiFiNets:
-                print()
                 loaded_net = {'oui': net['mac address'].upper()[0:8]}
                 oui_lookup = self.lookup_one_oui_from_service(loaded_net)
                 print(net['ssid'])
-                print(" Security: " + security_mode[net['security']])
+                if isinstance(net['security'], int):
+                    print(" Security: " + security_mode[net['security']])
+                elif isinstance(net['security'],str):
+                    print(" Security: " + net['security'])
                 for lookup in oui_lookup or print("Router info: Not in Lookup Table"):
                     print(" Router info:" + lookup['longname'])
         except TypeError:
+            print("Exception")
             pass
 
         """

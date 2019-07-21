@@ -21,6 +21,8 @@ class Win32:
 
     def wrap_scan_wifi(self, results):
         print("Win32: wrap_scan_wifi entry")
+        print("Results\n\n")
+        print(str(results))
         results = results.decode()
         results_ = results.split("\nSSID")
         this_ssid = WirelessNetwork("")
@@ -53,6 +55,8 @@ class Win32:
                 elif re.match(".+Channel.+:.+", line):
                     line = re.sub("Channel.*:", "", line)  # ChannelNumber
                     this_bssid.set_channel(line.replace("\r", ""))
+        print("---")
+        print(str(self.ssids))
         return self.ssids
 
     """ scan_wifi function returns text output from netsh command (Windows 10)
