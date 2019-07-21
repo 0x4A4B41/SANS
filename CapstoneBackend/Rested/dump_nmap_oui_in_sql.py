@@ -1,18 +1,16 @@
 import mysql.connector
+from CapstoneBackend.Rested.Config.DatabaseCreds import DatabaseCreds
 
-from CapstoneBackend.OUIManager.Base import Common
-from CapstoneBackend.OUIManager.Config.DatabaseCreds import DatabaseCreds
+from CapstoneBackend.Rested.Base import Common
 
-class dump_wireshark_oui_in_sql:
 
+class DumpNMAPOuiInSql:
 
     @staticmethod
-    def dump_wireshark_oui_to_db():
-
+    def dump_nmap_oui_to_db():
         c = Common()
-        nmap_oui_list = c.retrieve_oui_table_wireshark()
+        nmap_oui_list = c.retrieve_oui_table_nmap()
         print(len(nmap_oui_list))
-        dump_wireshark_oui_to_db(c.lookup_item_list_wireshark)
 
         conn = mysql.connector.connect(
             user=DatabaseCreds.CapstoneDev.user,
@@ -33,10 +31,9 @@ class dump_wireshark_oui_in_sql:
             except mysql.connector.errors.DatabaseError:
                 print("SQL:" + str(sql))
                 print("Data:" + str(data))
-
         cur.close()
         conn.close()
 
 
 if __name__ == '__main__':
-    dump_wireshark_oui_in_sql.dump_wireshark_oui_to_db()
+    DumpNMAPOuiInSql.dump_nmap_oui_to_db()

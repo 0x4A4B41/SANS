@@ -11,7 +11,7 @@ index.py routing page for Flask to manage exposed APIs for Capstone projectl
 """
 
 import mysql.connector
-from CapstoneBackend.OUIManager.Config.DatabaseCreds import DatabaseCreds
+from CapstoneBackend.Rested.Config.DatabaseCreds import DatabaseCreds
 from dns.resolver import Resolver
 from flask import Flask, jsonify, request
 

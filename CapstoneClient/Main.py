@@ -1,8 +1,7 @@
-from dns.resolver import Resolver
-from CapstoneClient.WiFiScanner.WiFiScanner import WiFiScanner, security_mode
-
 import requests
-import json
+from dns.resolver import Resolver
+
+from CapstoneClient.WiFiScanner.WiFiScanner import WiFiScanner, security_mode
 
 dns_prefix = 'http://192.168.65.24:5000'
 dns_endpoint = '/dnscheck'
@@ -66,14 +65,20 @@ class Main:
                 loaded_net = {'oui': net['mac address'].upper()[0:8]}
                 oui_lookup = self.lookup_one_oui_from_service(loaded_net)
                 print(net['ssid'])
-                if isinstance(net['security'], int):
+#                print("loaded_net: " + str(loaded_net))
+                if _WiFiScanner.isMac:
                     print(" Security: " + security_mode[net['security']])
-                elif isinstance(net['security'],str):
+                elif _WiFiScanner.isWin:
                     print(" Security: " + net['security'])
-                for lookup in oui_lookup or print("Router info: Not in Lookup Table"):
-                    print(" Router info:" + lookup['longname'])
+                if oui_lookup is None:
+                    print(' No Router info returned')
+                else:
+                    if len(oui_lookup) == 0:
+                        print(" No router info returned")
+                    for lookup in oui_lookup:
+                        print(' Router info:' + lookup['longname'])
         except TypeError:
-            print("Exception")
+            print ("exception")
             pass
 
         """
