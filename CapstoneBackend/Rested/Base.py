@@ -1,11 +1,13 @@
 import io
 import json
 import os
-import pwd
 import re
 import ssl
 import sys
 from urllib.request import urlopen
+if (sys.platform == "darwin"):
+    import pwd
+
 
 """
 Common Objects
@@ -114,7 +116,7 @@ class Common:
             if len(parts) == 2: # matches oui.txt format (0) MAC OUI (1) Vendor Short Name
                 parts[0] = parts[0][0:2] + ":" + parts[0][2:4] + ":" + parts[0][4:6] #OUI
                 self.lookup_item_list_nmap.append(MacLookUpTableItem(parts[0], parts[1]))
-        return len(self.lookup_item_list_nmap)
+        return self.lookup_item_list_nmap
 
     """ Retrieve OUI Table from wireshark website
     Only deal with 3 digit OUI for now
@@ -135,7 +137,7 @@ class Common:
                         else:
                             this_oui_instance = this_oui_instance + ":" + octet
                 self.lookup_item_list_wireshark.append(MacLookUpTableItem(parts[0], parts[1], parts[2]))
-        return len(self.lookup_item_list_wireshark)
+        return self.lookup_item_list_wireshark
 
     """ Convert Mac Address String xx:xx:xx:yy:yy:yy | xx-xx-xx-yy-yy-yy
     to array of int/hex objects - specific to data from wireshark
