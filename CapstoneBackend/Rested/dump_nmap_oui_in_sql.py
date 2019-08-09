@@ -16,7 +16,7 @@ class DumpNMAPOuiInSql:
             user=DatabaseCreds.CapstoneDev.user,
             password=DatabaseCreds.CapstoneDev.password,
             host=DatabaseCreds.CapstoneDev.host,
-            database='CapStone'
+            database=DatabaseCreds.CapstoneDev.database
         )
         cur = conn.cursor()
         for mac_addr_obj in nmap_oui_list:

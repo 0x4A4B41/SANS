@@ -18,7 +18,7 @@ class dump_wireshark_oui_in_sql:
             user=DatabaseCreds.CapstoneDev.user,
             password=DatabaseCreds.CapstoneDev.password,
             host=DatabaseCreds.CapstoneDev.host,
-            database='CapStone'
+            database=DatabaseCreds.CapstoneDev.database
         )
         cur = conn.cursor()
         for mac_addr_obj in wire_shark_oui_list:
