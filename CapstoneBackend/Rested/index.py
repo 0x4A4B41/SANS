@@ -1,4 +1,3 @@
-
 """
 index.py routing page for Flask to manage exposed APIs for Capstone projectl
 
