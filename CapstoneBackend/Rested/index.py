@@ -1,3 +1,4 @@
+
 """
 index.py routing page for Flask to manage exposed APIs for Capstone projectl
 
@@ -27,7 +28,7 @@ def get_oui():
         user=DatabaseCreds.CapstoneDev.user,
         password=DatabaseCreds.CapstoneDev.password,
         host=DatabaseCreds.CapstoneDev.host,
-        database='CapStone'
+        database=DatabaseCreds.CapstoneDev.host
     )
     cur = conn.cursor()
     sql = "select oui, shortName, longName from ouiTbl"
@@ -52,7 +53,7 @@ def lookup_oui():
         user=DatabaseCreds.CapstoneDev.user,
         password=DatabaseCreds.CapstoneDev.password,
         host=DatabaseCreds.CapstoneDev.host,
-        database='CapStone'
+        database=DatabaseCreds.CapstoneDev.database
     )
     cur = conn.cursor()
     sql = "select oui, shortName, longName from ouiTbl WHERE (oui='{}')".format(json['oui'])
