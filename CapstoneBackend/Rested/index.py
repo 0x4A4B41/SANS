@@ -60,7 +60,7 @@ def lookup_oui():
     try:
         cur.execute(sql)
         result = cur.fetchone();
-        resultset = dict({'oui': result['oui'], 'shortname': result['shortname'], 'longname': result['longame']})
+        resultset = dict({'oui': result[0], 'shortname': result[1], 'longname': result[2]})
     except mysql.connector.errors.DatabaseError:
         pass
         # print("SQL:" + str(sql))
