@@ -56,14 +56,14 @@ def lookup_oui():
         database=DatabaseCreds.CapstoneDev.database
     )
     cur = conn.cursor()
-    if (len(str(json['oui'])) > 0):
+    if hasattr(json, 'oui'):
         sql = "select oui, shortName, longName from ouiTbl WHERE (oui='{}')".format(json['oui'])
     else:
         sql = "select oui, shortName, longName from ouiTbl WHERE (oui='00:00:00')"
 
     try:
         cur.execute(sql)
-        result = cur.fetchone();
+        result = cur.fetchone()
         resultset = dict({'oui': result[0], 'shortname': result[1], 'longname': result[2]})
     except mysql.connector.errors.DatabaseError:
         pass
