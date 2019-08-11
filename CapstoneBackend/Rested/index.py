@@ -56,9 +56,9 @@ def lookup_oui():
         database=DatabaseCreds.CapstoneDev.database
     )
     cur = conn.cursor()
-    if hasattr(json, 'oui'):
+    try:
         sql = "select oui, shortName, longName from ouiTbl WHERE (oui='{}')".format(json['oui'])
-    else:
+    except AttributeError:
         sql = "select oui, shortName, longName from ouiTbl WHERE (oui='00:00:00')"
 
     try:
