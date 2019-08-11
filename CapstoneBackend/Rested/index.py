@@ -1,4 +1,5 @@
-"""
+
+"oui"""""
 index.py routing page for Flask to manage exposed APIs for Capstone projectl
 
     /macouilookup GET method - produces the contents of the OUI table
@@ -58,8 +59,8 @@ def lookup_oui():
     sql = "select oui, shortName, longName from ouiTbl WHERE (oui='{}')".format(json['oui'])
     try:
         cur.execute(sql)
-        for (oui, shortName, longName) in cur:
-            resultset.append(dict({'oui': oui, 'shortname': shortName, 'longname': longName}))
+        result = cur.fetchone();
+        dict({'oui': result['oui'], 'shortname': result['shortname'], 'longname': result['longame']})
     except mysql.connector.errors.DatabaseError:
         pass
         # print("SQL:" + str(sql))
